@@ -11,6 +11,7 @@ import contact as contact_handlers
 import questions_admin as questions_admin_handlers
 import quiz as quiz_handlers
 import start as start_handlers
+import status as status_handlers
 from admin_middleware import AdminOnlyMiddleware
 from config import settings
 from db_middleware import DatabaseMiddleware
@@ -41,6 +42,7 @@ async def main() -> None:
     # Routerlarni ketma-ket ulaymiz (admin birinchi bo'lishi shart emas,
     # chunki komandalar/callbacklar bir-biriga to'qnashmaydi)
     dispatcher.include_router(start_handlers.router)
+    dispatcher.include_router(status_handlers.router)
     dispatcher.include_router(quiz_handlers.router)
     dispatcher.include_router(contact_handlers.router)
     dispatcher.include_router(admin_handlers.router)

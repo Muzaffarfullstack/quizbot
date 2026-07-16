@@ -146,16 +146,11 @@ async def _finish_quiz(
 
     await callback.message.answer(f"🏁 Test yakunlandi!\n\nSizning natijangiz: {score} ta to'g'ri javob.")
 
-    if service.is_eligible_for_prize(score):
-        await state.set_state(QuizStates.waiting_for_phone)
-        await callback.message.answer(
-            "🎁 Tabriklaymiz, siz sovg'a uchun kurashayotganlar orasidasiz!\n\n"
-            "Sovg'ani olish uchun telefon raqamingizni yuboring.\n"
-            "Faqat pastdagi tugma orqali yuborish mumkin (o'z raqamingiz avtomatik aniqlanadi).",
-            reply_markup=request_phone_keyboard(),
-        )
-        logger.info("Sovg'a uchun telefon so'raldi: telegram_id=%s, score=%s", callback.from_user.id, score)
-    else:
-        await state.clear()
-        await callback.message.answer("Ishtirokingiz uchun rahmat! Bu safar sovg'a chegarasiga yetmadingiz.")
-        logger.info("Sovg'aga yetarli emas: telegram_id=%s, score=%s", callback.from_user.id, score)
+    await state.set_state(QuizStates.waiting_for_phone)
+    await callback.message.answer(
+        "✅ Natijalaringiz qabul qilindi.\n\n"
+        "G'oliblar aniqlanganda siz bilan bog'lanamiz. Iltimos, telefon raqamingizni yuboring.\n"
+        "Faqat pastdagi tugma orqali yuborish mumkin (o'z raqamingiz avtomatik aniqlanadi).",
+        reply_markup=request_phone_keyboard(),
+    )
+    logger.info("Telefon so'raldi: telegram_id=%s, score=%s", callback.from_user.id, score)
