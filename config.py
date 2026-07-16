@@ -13,6 +13,9 @@ class Settings(BaseSettings):
     ADMIN_IDS: str = ""  # vergul bilan ajratilgan telegram_id lar, masalan: "123,456"
 
     # --- Database ---
+    # Railway Postgres plugin avtomatik DATABASE_URL beradi (postgresql://...).
+    # Agar u mavjud bo'lsa shu ishlatiladi, aks holda pastdagi POSTGRES_* lardan yig'iladi (lokal dev uchun).
+    DATABASE_URL: str = ""
     POSTGRES_USER: str = "quiz_user"
     POSTGRES_PASSWORD: str = "quiz_pass"
     POSTGRES_DB: str = "quiz_db"
@@ -36,6 +39,14 @@ class Settings(BaseSettings):
     @property
     def database_url(self) -> str:
         """Async SQLAlchemy uchun asyncpg connection string."""
+        if self.DATABASE_URL:
+            # Railway "postgresql://" yoki "postgres://" beradi, asyncpg driverini qo'shamiz
+            url = self.DATABASE_URL
+            if url.startswith("postgres://"):
+                url = url.replace("postgres://", "postgresql://", 1)
+            if url.startswith("postgresql://"):
+                url = url.replace("postgresql://", "postgresql+asyncpg://", 1)
+            return url
         return (
             f"postgresql+asyncpg://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}"
             f"@{self.POSTGRES_HOST}:{self.POSTGRES_PORT}/{self.POSTGRES_DB}"

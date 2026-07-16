@@ -15,8 +15,10 @@ import start as start_handlers
 import status as status_handlers
 from admin_middleware import AdminOnlyMiddleware
 from config import settings
+from database import engine
 from db_middleware import DatabaseMiddleware
 from logging_config import setup_logging
+from model import Base
 
 logger = logging.getLogger(__name__)
 
@@ -24,6 +26,11 @@ logger = logging.getLogger(__name__)
 async def main() -> None:
     setup_logging()
     logger.info("Bot ishga tushmoqda...")
+
+    # alembic/versions bo'sh bo'lgani uchun jadvallarni shu yerda o'zi yaratamiz
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+    logger.info("Baza jadvallari tayyor.")
 
     bot = Bot(
         token=settings.BOT_TOKEN,
