@@ -27,22 +27,14 @@ async def list_pending_winners(message: Message, session: AsyncSession) -> None:
         return
 
     for user in users:
-        masked_phone = _mask_phone(user.phone)
+        phone = user.phone or "-"
         text = (
             f"User:\n{user.full_name or '-'}\n\n"
             f"Telegram:\n@{user.username or '-'}\n\n"
-            f"Phone:\n{masked_phone}\n\n"
+            f"Phone:\n{phone}\n\n"
             f"Score:\n{user.score}"
         )
         await message.answer(text, reply_markup=winner_review_keyboard(user.id))
-
-
-def _mask_phone(phone: str | None) -> str:
-    if not phone:
-        return "-"
-    if len(phone) <= 6:
-        return phone
-    return phone[:6] + "*" * (len(phone) - 6)
 
 
 @router.callback_query(F.data.startswith("winner_approve:"))
