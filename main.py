@@ -5,6 +5,7 @@ from aiogram import Bot, Dispatcher
 from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
 from aiogram.fsm.storage.memory import MemoryStorage
+from aiogram.types import BotCommand
 
 import admin as admin_handlers
 import contact as contact_handlers
@@ -49,6 +50,15 @@ async def main() -> None:
     dispatcher.include_router(questions_admin_handlers.router)
 
     await bot.delete_webhook(drop_pending_updates=True)
+
+    # Telegramning "/" menyu tugmasida ko'rinadigan komandalar ro'yxati
+    await bot.set_my_commands(
+        [
+            BotCommand(command="start", description="Testni boshlash"),
+            BotCommand(command="status", description="Natijam va holatim"),
+        ]
+    )
+
     logger.info("Polling boshlandi.")
     await dispatcher.start_polling(bot)
 
